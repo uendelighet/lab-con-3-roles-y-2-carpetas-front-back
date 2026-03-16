@@ -24,7 +24,7 @@ app.use('/api/consumer', consumerRoutes);
 app.use('/api/store', storeRoutes);
 app.use('/api/delivery', deliveryRoutes);
 
-const PORT = process.env.PORT || 3000;
+const PORT = 5000;
 
 app.listen(PORT, () => {
   console.log(`Rappi API running 🚀 on port ${PORT}`);

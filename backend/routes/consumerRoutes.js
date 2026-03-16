@@ -4,7 +4,7 @@
  * Aquí definimos las rutas que un usuario puede usar para ver tiendas
  * o interactuar con el sistema desde el lado del cliente.
  */
-
+console.log("consumerRoutes cargado");
 // 1️⃣ Importamos Express para poder crear un router
 const express = require('express');
 
@@ -24,6 +24,9 @@ const { getStores } = require('../controllers/consumerController');
 // Express ejecutará la función getStores del controller
 router.get('/stores', getStores);
 
+router.get('/test', (req,res)=>{
+  res.send("consumer router funciona");
+});
 
 // 5️⃣ Exportamos el router
 // Esto es FUNDAMENTAL porque permite que index.js pueda usar estas rutas
