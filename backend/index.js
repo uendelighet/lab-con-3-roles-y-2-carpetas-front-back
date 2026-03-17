@@ -9,23 +9,25 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// ruta de prueba
+// prueba
 app.get('/', (req, res) => {
-  res.send('Rappi API running 🚀');
+  res.send('API funcionando 🚀');
 });
 
-// importar rutas
+// rutas
+const authRoutes = require('./routes/authRoutes');
 const consumerRoutes = require('./routes/consumerRoutes');
 const storeRoutes = require('./routes/storeRoutes');
 const deliveryRoutes = require('./routes/deliveryRoutes');
 
 // usar rutas
+app.use('/api/auth', authRoutes);
 app.use('/api/consumer', consumerRoutes);
 app.use('/api/store', storeRoutes);
 app.use('/api/delivery', deliveryRoutes);
 
-const PORT = 5000;
+const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log(`Rappi API running 🚀 on port ${PORT}`);
+  console.log(`Servidor en puerto ${PORT} 🚀`);
 });
