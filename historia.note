@@ -1,0 +1,52 @@
+Terminal 1:
+cd backend
+npx nodemon index.js
+
+Terminal 2:
+cd frontend/labcito con 3 carpetas y 3 roles
+npm run dev
+
+
+Creamos ambas carpetas, front y back
+
+1. PRIMERO CREAMOS BACK
+2. Entramos a la carpeta de back y ponemos su package.json
+    cd carpeta 
+    npm init -y
+3. Ahi mismo en back instalamos las dependencias:
+    - express: Para el servidor y los routers de roles.
+    - @supabase/supabase-js: Para la conexión con la base de datos SQL.
+    - dotenv: Para proteger las coordenadas (credenciales) de la base de datos.
+    - cors: Para permitir que el frente se comunique con el comando central. back con front
+    - nodemon (como dependencia de desarrollo): Para que el servidor se reinicie solo al detectar cambios.
+    npm install express @supabase/supabase-js dotenv cors
+    npm install --save-dev nodemon
+    npm install
+4. Ahi mismo en el back, hay que poner el index.js (puesto de mando del back)
+5. Ahi mismo en el back, hay que poner una carpeta llamada config
+    Adentro, se crea un archivo llamado supabase.js (aqui los 3 roles llaman a la base de datos)
+6. Ahi mismo en el back, hay que poner una carpeta llamada routes y adentro las 3 rutas de los 3 roles
+    - consumerRoutes.js (Rutas para los que compran).
+    - storeRoutes.js (Rutas para los dueños de tiendas).
+    - deliveryRoutes.js (Rutas para los repartidores).
+7.Llenamos el codigo de las rutas
+8. Creamos la carpeta de controllers y los 3 controllers adentro por rol 
+9. Instalamos el validador (para que la info este completa y no hayan errores)
+ npm install express-validator
+10. Creamos el middleware y luego al guardia en el controlador del storeRoutes
+PARA ARRANCAR: npx nodemon index.js
+
+CREAMOS LA SUPABASE
+11. Guardamos la contraseña y vamos a settings a coger el anon y el url
+12. Lo pegamos en el .env
+VALIDAMOS QUE FUNCIONE LA MONDA: npx nodemon index.js
+12. Posiblemente si te metes a las rutas no haya nanda, porque no hay tablas
+13. Pon en el SQL Editor las 3 tablas y prueba con esto en otra 
+    query SELECT * FROM stores;
+
+1. SEGUNDO LLENAMOS EL FRONT 
+2. cd front
+3. npm create vite@latest
+4. npm install
+5. npm install axios
+6. PARA ARRANCAR: npm run dev
