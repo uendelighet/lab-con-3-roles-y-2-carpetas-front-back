@@ -1,178 +1,118 @@
 import { useState } from "react";
 import axios from "axios";
 
-// TIPOS (TypeScript feliz 🧘)
-type Store = {
-  id: number;
-  name: string;
-  address: string;
-};
-
-type Order = {
-  id: number;
-  status: string;
-};
-
 function App() {
 
-  // estados
-  const [stores, setStores] = useState<Store[]>([]);
-  const [orders, setOrders] = useState<Order[]>([]);
+  // ================= AUTH =================
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState("");
+  const [nameUser, setNameUser] = useState("");
+  const [storeName, setStoreName] = useState("");
+  const [userRole, setUserRole] = useState<string | null>(null);
 
-  const [name, setName] = useState("");
-  const [price, setPrice] = useState("");
-  const [storeId, setStoreId] = useState("");
+  const register = async () => {
+    await axios.post("http://localhost:5000/api/auth/register", {
+      email,
+      password,
+      name: nameUser,
+      role,
+      storeName
+    });
 
-  const [productId, setProductId] = useState("");
+    alert("Registrado 🚀");
+  };
 
-  // =========================
-  // CONSUMER → ver tiendas
-  // =========================
+  const login = async () => {
+    const res = await axios.post("http://localhost:5000/api/auth/login", {
+      email,
+      password
+    });
+
+    setUserRole(res.data.user.role);
+  };
+
+  // ================= DATA =================
+  const [stores, setStores] = useState<any[]>([]);
+  const [orders, setOrders] = useState<any[]>([]);
+
   const loadStores = async () => {
-    try {
-      const res = await axios.get(
-        "http://localhost:5000/api/consumer/stores"
-      );
-      setStores(res.data);
-    } catch (error) {
-      console.log(error);
-    }
+    const res = await axios.get("http://localhost:5000/api/consumer/stores");
+    setStores(res.data);
   };
 
-  // =========================
-  // STORE → crear producto
-  // =========================
-  const addProduct = async () => {
-    try {
-      await axios.post(
-        "http://localhost:5000/api/store/add-product",
-        {
-          name,
-          price: Number(price),
-          store_id: Number(storeId)
-        }
-      );
-
-      alert("Producto creado 🚀");
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  // =========================
-  // CONSUMER → crear pedido
-  // =========================
-  const createOrder = async () => {
-    try {
-      await axios.post(
-        "http://localhost:5000/api/consumer/create-order",
-        {
-          product_id: Number(productId)
-        }
-      );
-
-      alert("Pedido creado 🧾");
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  // =========================
-  // DELIVERY → ver pedidos
-  // =========================
   const loadOrders = async () => {
-    try {
-      const res = await axios.get(
-        "http://localhost:5000/api/delivery/pending-orders"
-      );
-
-      setOrders(res.data);
-    } catch (error) {
-      console.log(error);
-    }
+    const res = await axios.get("http://localhost:5000/api/delivery/pending-orders");
+    setOrders(res.data);
   };
 
+  // ================= UI =================
   return (
     <div>
-
       <h1>Mini Rappi</h1>
 
-      {/* ========================= */}
+      {/* LOGIN / REGISTER */}
+      {userRole === null && (
+        <>
+          <h2>Register</h2>
+
+          <input placeholder="name" onChange={e => setNameUser(e.target.value)} />
+          <input placeholder="email" onChange={e => setEmail(e.target.value)} />
+          <input placeholder="password" onChange={e => setPassword(e.target.value)} />
+
+          <select onChange={e => setRole(e.target.value)}>
+            <option value="">Select role</option>
+            <option value="consumer">Consumer</option>
+            <option value="store">Store</option>
+            <option value="delivery">Delivery</option>
+          </select>
+
+          {role === "store" && (
+            <input
+              placeholder="store name"
+              onChange={e => setStoreName(e.target.value)}
+            />
+          )}
+
+          <button onClick={register}>Register</button>
+
+          <h2>Login</h2>
+          <button onClick={login}>Login</button>
+        </>
+      )}
+
       {/* CONSUMER */}
-      {/* ========================= */}
+      {userRole === "consumer" && (
+        <>
+          <h2>Tiendas</h2>
+          <button onClick={loadStores}>Ver tiendas</button>
 
-      <h2>Tiendas</h2>
+          <ul>
+            {stores.map((s) => (
+              <li key={s.id}>{s.name}</li>
+            ))}
+          </ul>
+        </>
+      )}
 
-      <button onClick={loadStores}>
-        Ver tiendas
-      </button>
-
-      <ul>
-        {stores.map((store) => (
-          <li key={store.id}>
-            {store.name} - {store.address}
-          </li>
-        ))}
-      </ul>
-
-      {/* ========================= */}
       {/* STORE */}
-      {/* ========================= */}
+      {userRole === "store" && (
+        <h2>Panel tienda 🏪</h2>
+      )}
 
-      <h2>Crear Producto</h2>
-
-      <input
-        placeholder="nombre"
-        onChange={(e) => setName(e.target.value)}
-      />
-
-      <input
-        placeholder="precio"
-        onChange={(e) => setPrice(e.target.value)}
-      />
-
-      <input
-        placeholder="store id"
-        onChange={(e) => setStoreId(e.target.value)}
-      />
-
-      <button onClick={addProduct}>
-        Crear producto
-      </button>
-
-      {/* ========================= */}
-      {/* CONSUMER → PEDIDO */}
-      {/* ========================= */}
-
-      <h2>Crear Pedido</h2>
-
-      <input
-        placeholder="product id"
-        onChange={(e) => setProductId(e.target.value)}
-      />
-
-      <button onClick={createOrder}>
-        Crear pedido
-      </button>
-
-      {/* ========================= */}
       {/* DELIVERY */}
-      {/* ========================= */}
+      {userRole === "delivery" && (
+        <>
+          <h2>Pedidos</h2>
+          <button onClick={loadOrders}>Ver pedidos</button>
 
-      <h2>Pedidos Pendientes</h2>
-
-      <button onClick={loadOrders}>
-        Ver pedidos
-      </button>
-
-      <ul>
-        {orders.map((order) => (
-          <li key={order.id}>
-            Pedido #{order.id} - {order.status}
-          </li>
-        ))}
-      </ul>
-
+          <ul>
+            {orders.map((o) => (
+              <li key={o.id}>{o.status}</li>
+            ))}
+          </ul>
+        </>
+      )}
     </div>
   );
 }
